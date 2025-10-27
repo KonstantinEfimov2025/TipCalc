@@ -6,7 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,10 +32,19 @@ class MainActivity : ComponentActivity() {
 fun TipCalculatorApp() {
     var orderAmount by remember { mutableStateOf("") }
     var dishCount by remember { mutableStateOf("") }
+    var tipPercentage by remember { mutableStateOf(0f) }
+
+    val discount = when (dishCount.toIntOrNull() ?: 0) {
+        in 1..2 -> 3
+        in 3..5 -> 5
+        in 6..10 -> 7
+        in 11..Int.MAX_VALUE -> 10
+        else -> 0
+    }
 
     Column(
         modifier = Modifier.padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         // Поле ввода суммы заказа
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -81,6 +90,22 @@ fun TipCalculatorApp() {
                     textStyle = TextStyle(fontSize = 14.sp, color = Color.Black)
                 )
             }
+        }
+
+        // Слайдер чаевых
+        Column {
+            Text(text = "Чаевые: ${tipPercentage.toInt()}%", fontSize = 15.sp)
+            Slider(
+                value = tipPercentage,
+                onValueChange = { tipPercentage = it },
+                valueRange = 0f..25f
+            )
+        }
+
+        // Секция скидок
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(text = "Скидка: ", fontSize = 20.sp)
+            Text(text = "$discount%", fontSize = 20.sp)
         }
     }
 }
